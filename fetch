@@ -1,0 +1,39 @@
+#!/bin/bash 
+
+# k="\e[0;37m"
+k="\e[38;2;0;219;186m"
+b="\e[48;2;0;219;186m"
+v="\e[1;37m"
+
+pkgs=$(pacman -Q | wc -l)
+shellv=$(pacman -Qo $SHELL | sed "s/.*by //g")
+
+if [[ ! -z $TERM_PROGRAM ]]; then
+  termv=$(pacman -Qo $TERM_PROGRAM | sed "s/.*by //g")
+fi
+
+edv=$(pacman -Qo $EDITOR | sed "s/.*by //g")
+
+echo -e ""
+echo -e "  \e[100m\e[1;37m Info \e[0m"
+echo -e ""
+echo -e "  ${k}os        ${v}$(uname -o) $(uname -m)"
+echo -e "  ${k}cpu       ${v}$(cat /proc/cpuinfo | grep Hardware | sed "s/.*: //g")"
+echo -e "  ${k}phone     ${v}$(getprop ro.product.manufacturer) $(getprop ro.product.marketname)"
+echo -e "  ${k}kernel    ${v}$(uname -r | sed "s/-.*//g")"
+echo -e ""
+echo -e "  ${k}console   ${v}Termux v$(echo $TERMUX_VERSION)"
+echo -e "  ${k}editor    ${v}${edv}"
+echo -e "  ${k}shell     ${v}${shellv}"
+
+if [[ ! -z $TERM_PROGRAM ]]; then
+  echo -e "  ${k}term      ${v}${termv}"
+fi
+
+echo -e ""
+echo -e "  \e[100m\e[1;37m Stats \e[0m"
+echo -e ""
+echo -e "  ${k}pkgs      ${v}${pkgs} (pacman)"
+echo -e "  ${k}disk      ${v}$(df -h | grep '/data' | tail -1 | awk '{print $3}') / $(df -h | grep '/data' | tail -1 | awk '{print $2}')"
+echo -e "  ${k}mem       ${v}$(free --mega -t | tail -1 | awk '{print $3}') MB / $(free --mega -t | tail -1 | awk '{print $2}') MB"
+echo -e "  ${k}up        ${v}$(uptime -p | sed "s/up //g")"
